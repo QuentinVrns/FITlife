@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:fitlife/pages/home/home_page.dart';
-import 'package:fitlife/routes/app_routes.dart';
+import 'pages/home_page.dart';
+import 'pages/login_page.dart';
+import 'pages/signup_page.dart';
+import 'pages/splash_page.dart';
+import 'pages/HeightPage.dart';
+import 'pages/WeightPage.dart';
+import 'pages/AgePage.dart';
+
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mon Application',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      initialRoute: '/',
-      routes: AppRoutes.routes, // Utilisation des routes
+      debugShowCheckedModeBanner: false,
+      title: 'FITlife',
+      initialRoute: '/splash',
+      routes: {
+        '/splash': (context) => const SplashPage(),
+        '/weight': (context) => const WeightPage(),
+        '/height': (context) => const HeightPage(),
+        '/age': (context) => const AgePage(),
+        '/home': (context) => const HomePage(),
+        '/login': (context) => const LoginPage(),
+        '/signup': (context) => const SignupPage(),
+      },
     );
   }
 }
