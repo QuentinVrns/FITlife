@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'HeightPage.dart'; // Importe la page suivante
+import 'HeightPage.dart'; // Page suivante
 
 class WeightPage extends StatefulWidget {
   const WeightPage({Key? key}) : super(key: key);
@@ -10,182 +10,247 @@ class WeightPage extends StatefulWidget {
 }
 
 class _WeightPageState extends State<WeightPage> {
-  double weight = 60.0; // Poids initial
-  double minWeight = 30.0; // Poids minimum
-  double maxWeight = 200.0; // Poids maximum
-  bool isHolding = false; // Pour détecter la pression continue
+  double weight = 128.0; // Poids initial
+  final double minWeight = 30.0; // Poids minimum
+  final double maxWeight = 200.0; // Poids maximum
 
   Future<void> saveWeightAndProceed() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('weight', weight); // Enregistre temporairement
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const HeightPage()),
+      MaterialPageRoute(builder: (context) => const HeightPage()), // Va à la page HeightPage
     );
   }
 
-  // Fonction pour incrémenter ou décrémenter en continu
-  void _startAdjustingWeight(bool isIncrement) {
+  void _onPanUpdate(DragUpdateDetails details) {
     setState(() {
-      isHolding = true;
-    });
-
-    Future.doWhile(() async {
-      if (!isHolding) return false; // Arrêter si l'utilisateur relâche
-      setState(() {
-        if (isIncrement && weight < maxWeight) {
-          weight += 1;
-        } else if (!isIncrement && weight > minWeight) {
-          weight -= 1;
-        }
-      });
-      await Future.delayed(const Duration(milliseconds: 100)); // Vitesse d'ajustement
-      return isHolding;
-    });
-  }
-
-  // Fonction pour arrêter l'ajustement
-  void _stopAdjustingWeight() {
-    setState(() {
-      isHolding = false;
+      weight += details.delta.dx * 0.5; // Ajuste le poids en fonction du mouvement horizontal
+      weight = weight.clamp(minWeight, maxWeight); // Limite le poids entre le minimum et le maximum
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Image de fond
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/balance.jpg', // Image de fond
-              fit: BoxFit.cover,
-            ),
-          ),
-          // Superposition sombre
-          Container(
-            color: Colors.black.withOpacity(0.6),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Barre supérieure
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Titre
-                  const Text(
-                    'Entrer votre poids',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.2),
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-
-                  // Cercle avec poids et progression
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Fond du cercle
-                      SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: CircularProgressIndicator(
-                          value: (weight - minWeight) / (maxWeight - minWeight), // Remplissage
-                          strokeWidth: 10,
-                          backgroundColor: Colors.white24,
-                          valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
-                        ),
-                      ),
-                      // Texte du poids
-                      Text(
-                        '${weight.round()} kg',
-                        style: const TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                  const Text(
+                    'Questionnaire',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  const SizedBox(height: 40),
-
-                  // Boutons "+" et "-"
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Bouton "-"
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (weight > minWeight) weight -= 1;
-                          });
-                        },
-                        onLongPress: () => _startAdjustingWeight(false), // Décrément continu
-                        onLongPressUp: _stopAdjustingWeight, // Arrêter quand relâché
-                        child: Container(
-                          width: 60,
-                          height: 60,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.remove,
-                            color: Colors.black,
-                            size: 30,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 40),
-                      // Bouton "+"
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (weight < maxWeight) weight += 1;
-                          });
-                        },
-                        onLongPress: () => _startAdjustingWeight(true), // Incrément continu
-                        onLongPressUp: _stopAdjustingWeight, // Arrêter quand relâché
-                        child: Container(
-                          width: 60,
-                          height: 60,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.black,
-                            size: 30,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 40),
-
-                  // Bouton pour continuer
-                  ElevatedButton(
-                    onPressed: saveWeightAndProceed,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: const Text(
-                      'Suivant',
-                      style: TextStyle(color: Colors.black, fontSize: 18),
+                      '2 of 6',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 30),
+
+              // Question centrée
+              Center(
+                child: const Text(
+                  'Quel est votre poids ?',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              // Affichage du poids et barre personnalisée
+              Expanded(
+                child: GestureDetector(
+                  onPanUpdate: _onPanUpdate, // Détecte les balayages horizontaux
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Affichage centré du poids
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '${weight.round()}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 72,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const TextSpan(
+                              text: ' kg',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Barre de mesure personnalisée
+                      CustomPaint(
+                        size: const Size(double.infinity, 150), // Largeur infinie
+                        painter: WeightBarPainter(
+                          weight: weight,
+                          minWeight: minWeight,
+                          maxWeight: maxWeight,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Bouton "Continuer"
+              ElevatedButton(
+                onPressed: saveWeightAndProceed, // Navigue vers la page HeightPage
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shadowColor: Colors.orange.withOpacity(0.4),
+                  elevation: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text(
+                      'Continuer',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
+}
+
+class WeightBarPainter extends CustomPainter {
+  final double weight;
+  final double minWeight;
+  final double maxWeight;
+
+  WeightBarPainter({
+    required this.weight,
+    required this.minWeight,
+    required this.maxWeight,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white24
+      ..strokeWidth = 2;
+
+    final activePaint = Paint()
+      ..color = Colors.orange
+      ..strokeWidth = 4;
+
+    const double step = 20.0; // Distance entre les traits
+    const double longTickHeight = 40.0;
+    const double shortTickHeight = 20.0;
+
+    final double centerX = size.width / 2;
+    final double centerY = size.height / 2;
+
+    for (double i = -10; i <= 10; i++) {
+      final isLongTick = (weight + i).round() % 5 == 0;
+
+      final x = centerX + i * step;
+      final yStart = centerY - (isLongTick ? longTickHeight : shortTickHeight);
+      final yEnd = centerY;
+
+      // Ligne active (au centre)
+      if (i == 0) {
+        canvas.drawLine(Offset(x, yStart), Offset(x, yEnd), activePaint);
+      } else {
+        // Autres lignes
+        canvas.drawLine(Offset(x, yStart), Offset(x, yEnd), paint);
+      }
+
+      // Texte pour les longues graduations
+      if (isLongTick) {
+        final textSpan = TextSpan(
+          text: '${(weight + i).clamp(minWeight, maxWeight).round()}',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+          ),
+        );
+        final textPainter = TextPainter(
+          text: textSpan,
+          textDirection: TextDirection.ltr,
+        );
+        textPainter.layout();
+        textPainter.paint(
+          canvas,
+          Offset(x - textPainter.width / 2, centerY + 10),
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

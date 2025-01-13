@@ -6,6 +6,9 @@ import 'pages/splash_page.dart';
 import 'pages/HeightPage.dart';
 import 'pages/WeightPage.dart';
 import 'pages/AgePage.dart';
+import 'pages/GenderPage.dart';
+import 'pages/FitnessExperiencePage.dart';
+import 'pages/ExercisePreferencePage.dart';
 
 
 void main() {
@@ -29,6 +32,11 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignupPage(),
+        '/gender': (context) => const GenderPage(),
+        '/fitness': (context) => const FitnessExperiencePage(),
+        '/exercice': (context) => const ExercisePreferencePage(),
+
+
       },
     );
   }

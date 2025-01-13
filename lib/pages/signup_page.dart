@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'WeightPage.dart'; // Importe la première étape
+import 'GenderPage.dart'; // Importe la première étape
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -37,7 +37,7 @@ class _SignupPageState extends State<SignupPage> {
       // Redirige vers la page du poids
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const WeightPage()),
+        MaterialPageRoute(builder: (context) => const GenderPage()),
       );
     } catch (e) {
       setState(() {

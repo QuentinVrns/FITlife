@@ -33,12 +33,12 @@ class SplashPage extends StatelessWidget {
                     duration: const Duration(seconds: 2),
                     builder: (context, value, child) {
                       return Opacity(
-                        opacity: value * 0.4, // Réduction de l'opacité
+                        opacity: value * 1, // Réduction de l'opacité
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: Image.asset(
-                            'assets/images/FITlife.png', // Chemin de l'image FITlife
-                            height: 200, // Taille ajustée de l'image
+                            'assets/images/FITlifeLogoModif.png', // Chemin de l'image FITlife
+                            height: 300, // Taille ajustée de l'image
                           ),
                         ),
                       );
