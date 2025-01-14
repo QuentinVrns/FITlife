@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'HeightPage.dart'; // Page suivante
+import 'HeightPage.dart';
 
 class WeightPage extends StatefulWidget {
   const WeightPage({Key? key}) : super(key: key);
@@ -10,22 +10,22 @@ class WeightPage extends StatefulWidget {
 }
 
 class _WeightPageState extends State<WeightPage> {
-  double weight = 128.0; // Poids initial
+  double weight = 70.0; // Poids initial
   final double minWeight = 30.0; // Poids minimum
   final double maxWeight = 200.0; // Poids maximum
 
   Future<void> saveWeightAndProceed() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('weight', weight); // Enregistre temporairement
+    await prefs.setDouble('weight', weight); // Enregistre le poids temporairement
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const HeightPage()), // Va à la page HeightPage
+      MaterialPageRoute(builder: (context) => const HeightPage()), // Redirige vers la page suivante
     );
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
     setState(() {
-      weight += details.delta.dx * 0.5; // Ajuste le poids en fonction du mouvement horizontal
+      weight += details.delta.dx * 0.2; // Ajuste le poids par petites étapes
       weight = weight.clamp(minWeight, maxWeight); // Limite le poids entre le minimum et le maximum
     });
   }
@@ -94,7 +94,7 @@ class _WeightPageState extends State<WeightPage> {
                   'Quel est votre poids ?',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -116,7 +116,7 @@ class _WeightPageState extends State<WeightPage> {
                               text: '${weight.round()}',
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 72,
+                                fontSize: 64,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -124,7 +124,7 @@ class _WeightPageState extends State<WeightPage> {
                               text: ' kg',
                               style: TextStyle(
                                 color: Colors.white70,
-                                fontSize: 24,
+                                fontSize: 20,
                               ),
                             ),
                           ],
@@ -134,7 +134,7 @@ class _WeightPageState extends State<WeightPage> {
 
                       // Barre de mesure personnalisée
                       CustomPaint(
-                        size: const Size(double.infinity, 150), // Largeur infinie
+                        size: const Size(double.infinity, 100), // Taille réduite
                         painter: WeightBarPainter(
                           weight: weight,
                           minWeight: minWeight,
@@ -148,7 +148,7 @@ class _WeightPageState extends State<WeightPage> {
 
               // Bouton "Continuer"
               ElevatedButton(
-                onPressed: saveWeightAndProceed, // Navigue vers la page HeightPage
+                onPressed: saveWeightAndProceed,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
@@ -164,7 +164,7 @@ class _WeightPageState extends State<WeightPage> {
                     Text(
                       'Continuer',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -201,18 +201,18 @@ class WeightBarPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.white24
-      ..strokeWidth = 2;
+      ..strokeWidth = 1.5;
 
     final activePaint = Paint()
       ..color = Colors.orange
-      ..strokeWidth = 4;
+      ..strokeWidth = 3;
 
-    const double step = 20.0; // Distance entre les traits
-    const double longTickHeight = 40.0;
-    const double shortTickHeight = 20.0;
+    const double step = 20.0;
+    const double longTickHeight = 30.0;
+    const double shortTickHeight = 15.0;
 
-    final double centerX = size.width / 2;
-    final double centerY = size.height / 2;
+    final centerX = size.width / 2;
+    final centerY = size.height / 2;
 
     for (double i = -10; i <= 10; i++) {
       final isLongTick = (weight + i).round() % 5 == 0;
@@ -225,7 +225,6 @@ class WeightBarPainter extends CustomPainter {
       if (i == 0) {
         canvas.drawLine(Offset(x, yStart), Offset(x, yEnd), activePaint);
       } else {
-        // Autres lignes
         canvas.drawLine(Offset(x, yStart), Offset(x, yEnd), paint);
       }
 
@@ -235,7 +234,7 @@ class WeightBarPainter extends CustomPainter {
           text: '${(weight + i).clamp(minWeight, maxWeight).round()}',
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 14,
+            fontSize: 12,
           ),
         );
         final textPainter = TextPainter(

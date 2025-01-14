@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'WeightPage.dart'; // Page suivante (Poids)
 
 class GenderPage extends StatefulWidget {
@@ -11,6 +12,7 @@ class GenderPage extends StatefulWidget {
 class _GenderPageState extends State<GenderPage> {
   String? selectedGender; // Variable pour stocker le choix de l'utilisateur
 
+  /// Sauvegarder le genre et passer à la page suivante
   Future<void> saveGenderAndProceed() async {
     if (selectedGender == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -22,10 +24,21 @@ class _GenderPageState extends State<GenderPage> {
       return;
     }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const WeightPage()), // Passe à la page Poids
-    );
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('gender', selectedGender!); // Enregistre le genre
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const WeightPage()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -99,8 +112,8 @@ class _GenderPageState extends State<GenderPage> {
               ),
               const SizedBox(height: 20),
 
-              // Ajout d'un Spacer pour centrer
-              Spacer(),
+              // Spacer pour centrer
+              const Spacer(),
 
               // Options de sélection de genre
               Column(
@@ -109,16 +122,16 @@ class _GenderPageState extends State<GenderPage> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedGender = 'Homme';
+                        selectedGender = 'male';
                       });
                     },
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 16),
-                      height: 150,
+                      height: 120, // Taille ajustée pour les écrans
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: selectedGender == 'Homme'
+                          color: selectedGender == 'male'
                               ? Colors.orange
                               : Colors.transparent,
                           width: 2,
@@ -133,7 +146,6 @@ class _GenderPageState extends State<GenderPage> {
                       ),
                       child: Stack(
                         children: [
-                          // Image en arrière-plan
                           ClipRRect(
                             borderRadius: BorderRadius.circular(20),
                             child: Image.asset(
@@ -143,23 +155,18 @@ class _GenderPageState extends State<GenderPage> {
                               height: double.infinity,
                             ),
                           ),
-                          // Texte et icône en superposition
                           Positioned(
                             bottom: 10,
                             left: 10,
                             child: Row(
                               children: const [
-                                Icon(
-                                  Icons.male,
-                                  color: Colors.white,
-                                  size: 32,
-                                ),
+                                Icon(Icons.male, color: Colors.white, size: 28),
                                 SizedBox(width: 10),
                                 Text(
                                   'Homme',
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -175,15 +182,15 @@ class _GenderPageState extends State<GenderPage> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedGender = 'Femme';
+                        selectedGender = 'female';
                       });
                     },
                     child: Container(
-                      height: 150,
+                      height: 120,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: selectedGender == 'Femme'
+                          color: selectedGender == 'female'
                               ? Colors.orange
                               : Colors.transparent,
                           width: 2,
@@ -198,7 +205,6 @@ class _GenderPageState extends State<GenderPage> {
                       ),
                       child: Stack(
                         children: [
-                          // Image en arrière-plan
                           ClipRRect(
                             borderRadius: BorderRadius.circular(20),
                             child: Image.asset(
@@ -208,23 +214,18 @@ class _GenderPageState extends State<GenderPage> {
                               height: double.infinity,
                             ),
                           ),
-                          // Texte et icône en superposition
                           Positioned(
                             bottom: 10,
                             left: 10,
                             child: Row(
                               children: const [
-                                Icon(
-                                  Icons.female,
-                                  color: Colors.white,
-                                  size: 32,
-                                ),
+                                Icon(Icons.female, color: Colors.white, size: 28),
                                 SizedBox(width: 10),
                                 Text(
                                   'Femme',
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -238,8 +239,8 @@ class _GenderPageState extends State<GenderPage> {
                 ],
               ),
 
-              // Ajout d'un Spacer pour équilibrer
-              Spacer(),
+              // Spacer pour équilibrer
+              const Spacer(),
 
               // Boutons
               Column(
@@ -256,7 +257,7 @@ class _GenderPageState extends State<GenderPage> {
                     },
                     child: Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade900,
                         borderRadius: BorderRadius.circular(30),
@@ -266,7 +267,7 @@ class _GenderPageState extends State<GenderPage> {
                           'Je ne préfere pas répondre!',
                           style: TextStyle(
                             color: Colors.orange,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -282,7 +283,7 @@ class _GenderPageState extends State<GenderPage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       shadowColor: Colors.orange.withOpacity(0.4),
                       elevation: 8,
                     ),
@@ -292,16 +293,13 @@ class _GenderPageState extends State<GenderPage> {
                         Text(
                           'Continue',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
                         SizedBox(width: 10),
-                        Icon(
-                          Icons.arrow_forward,
-                          color: Colors.white,
-                        ),
+                        Icon(Icons.arrow_forward, color: Colors.white),
                       ],
                     ),
                   ),

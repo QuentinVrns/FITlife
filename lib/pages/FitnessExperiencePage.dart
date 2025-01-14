@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'ExercisePreferencePage.dart'; // Page suivante
 
 class FitnessExperiencePage extends StatefulWidget {
@@ -21,6 +22,9 @@ class _FitnessExperiencePageState extends State<FitnessExperiencePage> {
       );
       return;
     }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fitness_experience', selectedExperience!); // Enregistre l'expérience
 
     Navigator.push(
       context,
@@ -109,13 +113,13 @@ class _FitnessExperiencePageState extends State<FitnessExperiencePage> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          selectedExperience = 'Débutant';
+                          selectedExperience = 'débutant';
                         });
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: selectedExperience == 'Débutant'
+                          color: selectedExperience == 'débutant'
                               ? Colors.orange.withOpacity(0.3)
                               : Colors.grey.shade900,
                           borderRadius: BorderRadius.circular(20),
@@ -144,13 +148,13 @@ class _FitnessExperiencePageState extends State<FitnessExperiencePage> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          selectedExperience = 'Amateur';
+                          selectedExperience = 'amateur';
                         });
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: selectedExperience == 'Amateur'
+                          color: selectedExperience == 'amateur'
                               ? Colors.orange.withOpacity(0.3)
                               : Colors.grey.shade900,
                           borderRadius: BorderRadius.circular(20),
@@ -179,13 +183,13 @@ class _FitnessExperiencePageState extends State<FitnessExperiencePage> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          selectedExperience = 'Expérimenté';
+                          selectedExperience = 'expérimenté';
                         });
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: selectedExperience == 'Expérimenté'
+                          color: selectedExperience == 'expérimenté'
                               ? Colors.orange.withOpacity(0.3)
                               : Colors.grey.shade900,
                           borderRadius: BorderRadius.circular(20),
@@ -214,13 +218,13 @@ class _FitnessExperiencePageState extends State<FitnessExperiencePage> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          selectedExperience = 'Athletic';
+                          selectedExperience = 'athletic';
                         });
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: selectedExperience == 'Athletic'
+                          color: selectedExperience == 'athletic'
                               ? Colors.orange.withOpacity(0.3)
                               : Colors.grey.shade900,
                           borderRadius: BorderRadius.circular(20),

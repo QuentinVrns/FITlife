@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -10,206 +11,195 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Variables pour les champs de texte
   String email = '';
   String password = '';
-
-  // Liste des utilisateurs enregistrés
-  Map<String, String> users = {};
-
-  // Variable pour le message d'erreur
   String errorMessage = '';
+  bool isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUsers();
-  }
-
-  // Fonction pour charger les utilisateurs enregistrés
-  Future<void> _loadUsers() async {
-    final prefs = await SharedPreferences.getInstance();
-    final accounts = prefs.getStringList('accounts') ?? [];
-
-    // Transformer la liste en Map : email -> password
-    final Map<String, String> loadedUsers = {};
-    for (var account in accounts) {
-      final parts = account.split(':'); // Format : fullName:email:password:weight:height:age
-      if (parts.length >= 3) { // Ignore les champs supplémentaires
-        loadedUsers[parts[1]] = parts[2]; // email -> password
-      }
-    }
-
+  Future<void> _validateLogin() async {
     setState(() {
-      users = loadedUsers;
+      isLoading = true;
+      errorMessage = '';
     });
 
-    // Debugging
-    print('Utilisateurs chargés : $users');
+    const url = 'https://reymond.alwaysdata.net/FITLife/login.php';
+    const token = 'd8547be5-d190-11ef-8788-525400af6226';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'token': token,
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data['success'] == true) {
+          // Sauvegarder l'utilisateur dans les préférences
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user', jsonEncode(data['user']));
+
+          // Rediriger vers la page d'accueil
+          Navigator.pushNamed(context, '/home');
+        } else {
+          setState(() {
+            errorMessage = data['message'] ?? 'Login failed. Please try again.';
+          });
+        }
+      } else {
+        setState(() {
+          errorMessage = 'Server error. Please try again later.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'An error occurred. Check your connection.';
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Image de fond
-          Positioned.fill(
-            child: Image.asset('assets/images/background.jpg', fit: BoxFit.cover),
-          ),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;  // Empêche l'utilisateur de revenir en arrière
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Background Image
+            Positioned.fill(
+              child: Image.asset('assets/images/background.jpg', fit: BoxFit.cover),
+            ),
 
-          // Contenu principal
-          Container(
-            color: Colors.black.withOpacity(0.5), // Fond transparent
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Bouton retour
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Titre "Sign In"
-                    const Text(
-                      'Sign In',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-
-                    // Champ Email
-                    TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          email = value.trim();
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        labelStyle: const TextStyle(
-                          color: Colors.white70,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.2),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.white),
+            // Main Content
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      const Text(
+                        'Sign In',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 40),
 
-                    // Champ Password
-                    TextField(
-                      obscureText: true,
-                      onChanged: (value) {
-                        setState(() {
-                          password = value.trim();
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: const TextStyle(
-                          color: Colors.white70,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.2),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.white),
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Message d'erreur
-                    if (errorMessage.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          errorMessage,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 14,
+                      // Email Field
+                      TextField(
+                        onChanged: (value) => setState(() => email = value.trim()),
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: const TextStyle(color: Colors.white70),
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.2),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: Colors.white),
                           ),
                         ),
+                        style: const TextStyle(color: Colors.white),
                       ),
+                      const SizedBox(height: 20),
 
-                    const SizedBox(height: 40),
-
-                    // Bouton de connexion
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (users[email] == password) {
-                            // Si l'utilisateur est trouvé
-                            Navigator.pushNamed(context, '/home');
-                          } else {
-                            setState(() {
-                              errorMessage = 'Incorrect email or password';
-                            });
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(16),
-                          backgroundColor: Colors.white, // Bouton blanc
-                        ),
-                        child: const Icon(
-                          Icons.arrow_forward,
-                          color: Colors.black, // Icône noire
-                        ),
-                      ),
-                    ),
-
-                    // Lien "Sign Up"
-                    const Spacer(),
-                    Center(
-                      child: Column(
-                        children: [
-                          const Text(
-                            "Vous n'avez pas de compte?",
-                            style: TextStyle(color: Colors.white70),
+                      // Password Field
+                      TextField(
+                        obscureText: true,
+                        onChanged: (value) => setState(() => password = value.trim()),
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: const TextStyle(color: Colors.white70),
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.2),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
                           ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/signup');
-                            },
-                            child: const Text(
-                              'Sign Up',
-                              style: TextStyle(color: Colors.white),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: Colors.white),
+                          ),
+                        ),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Error Message
+                      if (errorMessage.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            errorMessage,
+                            style: const TextStyle(color: Colors.red, fontSize: 14),
+                          ),
+                        ),
+
+                      const SizedBox(height: 40),
+
+                      // Login Button
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed: isLoading ? null : _validateLogin,
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(16),
+                            backgroundColor: Colors.white,
+                          ),
+                          child: isLoading
+                              ? const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                          )
+                              : const Icon(Icons.arrow_forward, color: Colors.black),
+                        ),
+                      ),
+
+                      // Sign Up Link
+                      const Spacer(),
+                      Center(
+                        child: Column(
+                          children: [
+                            const Text(
+                              "Vous n'avez pas de compte?",
+                              style: TextStyle(color: Colors.white70),
                             ),
-                          ),
-                        ],
+                            TextButton(
+                              onPressed: () => Navigator.pushNamed(context, '/signup'),
+                              child: const Text(
+                                'Sign Up',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

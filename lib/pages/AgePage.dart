@@ -1,5 +1,7 @@
+import 'package:fitlife/pages/FitnessExperiencePage.dart';
 import 'package:flutter/material.dart';
-import 'FitnessExperiencePage.dart'; // Page suivante (FitnessExperiencePage)
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class AgePage extends StatefulWidget {
   const AgePage({Key? key}) : super(key: key);
@@ -9,27 +11,16 @@ class AgePage extends StatefulWidget {
 }
 
 class _AgePageState extends State<AgePage> {
-  int age = 18;
+  int age = 25; // Âge initial
+  final int minAge = 18; // Âge minimum
+  final int maxAge = 100; // Âge maximum
 
-  late FixedExtentScrollController _scrollController;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = FixedExtentScrollController(initialItem: age - 1); // Démarre à 18 ans
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  // Retirer la logique d'enregistrement et rediriger directement
-  Future<void> proceedWithoutSaving() async {
+  Future<void> saveAgeAndProceed() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('age', age); // Enregistre temporairement
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const FitnessExperiencePage()), // Passe à la page suivante
+      MaterialPageRoute(builder: (context) => const FitnessExperiencePage()), // Va à la page suivante
     );
   }
 
@@ -94,7 +85,7 @@ class _AgePageState extends State<AgePage> {
               // Question centrée
               Center(
                 child: const Text(
-                  'Quel est votre âge?',
+                  'Quel est votre âge ?',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 28,
@@ -102,82 +93,54 @@ class _AgePageState extends State<AgePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
 
-              // Compteur interactif
-              Expanded(
-                child: ListWheelScrollView.useDelegate(
-                  controller: _scrollController,
-                  itemExtent: 80,
-                  perspective: 0.003,
-                  diameterRatio: 1.5,
-                  physics: const FixedExtentScrollPhysics(),
-                  onSelectedItemChanged: (index) {
-                    setState(() {
-                      age = index + 1; // Convertit l'index en âge
-                    });
-                  },
-                  childDelegate: ListWheelChildBuilderDelegate(
-                    builder: (context, index) {
-                      final isSelected = age == index + 1;
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOut,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: isSelected ? Colors.white : Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          '${index + 1}',
-                          style: TextStyle(
-                            fontSize: isSelected ? 36 : 24,
-                            fontWeight: FontWeight.bold,
-                            color: isSelected ? Colors.black : Colors.white,
-                          ),
-                        ),
-                      );
-                    },
-                    childCount: 100, // Limite supérieure (100 ans)
+              // Slider pour l'âge
+              Slider(
+                value: age.toDouble(),
+                min: minAge.toDouble(),
+                max: maxAge.toDouble(),
+                divisions: maxAge - minAge,
+                label: '$age ans',
+                onChanged: (double newValue) {
+                  setState(() {
+                    age = newValue.toInt();
+                  });
+                },
+              ),
+
+              // Bouton "Continuer"
+              ElevatedButton(
+                onPressed: saveAgeAndProceed, // Navigue vers la page suivante
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shadowColor: Colors.orange.withOpacity(0.4),
+                  elevation: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text(
+                      'Continuer',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Bouton "Continuer"
-              Center(
-                child: ElevatedButton(
-                  onPressed: proceedWithoutSaving, // Rediriger sans sauvegarder
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    shadowColor: Colors.orange.withOpacity(0.4),
-                    elevation: 8,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Text(
-                        'Continue',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
             ],
           ),
         ),

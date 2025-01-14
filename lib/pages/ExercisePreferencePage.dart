@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'WeightPage.dart'; // Page suivante
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'login_page.dart';  // Importer votre page de connexion
 
 class ExercisePreferencePage extends StatefulWidget {
   const ExercisePreferencePage({Key? key}) : super(key: key);
@@ -11,21 +14,104 @@ class ExercisePreferencePage extends StatefulWidget {
 class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
   String? selectedExercise; // Variable pour stocker le choix de l'utilisateur
 
-  Future<void> savePreferenceAndProceed() async {
-    if (selectedExercise == null) {
+  // Fonction pour enregistrer la préférence de sport dans SharedPreferences
+  Future<void> saveExercisePreference(String exercise) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('exercise_preference', exercise); // Enregistre la préférence de sport
+  }
+
+  // Fonction pour envoyer les données à l'API
+  Future<void> submitData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Définir un token fixe
+    final String token = 'd8547be5-d190-11ef-8788-525400af6226'; // Token fixe
+
+    // Récupérer les autres informations de SharedPreferences
+    final String? username = prefs.getString('username');
+    final String? password = prefs.getString('password');
+    final String? email = prefs.getString('email');
+    final String? favorite_sport = prefs.getString('exercise_preference') ?? 'Non spécifié'; // Valeur par défaut si null
+    final String? experience = prefs.getString('fitness_experience');
+    final String? gender = prefs.getString('gender');
+
+    // Utilise getDouble pour récupérer des valeurs de type double et les convertir en int
+    final double? weight = prefs.getDouble('weight');
+    final double? height = prefs.getDouble('height');
+
+    // Convertir les valeurs double en int si nécessaire
+    final int weightInt = weight?.toInt() ?? 0; // Utiliser 0 par défaut si weight est null
+    final int heightInt = height?.toInt() ?? 0; // Utiliser 0 par défaut si height est null
+
+    // Utilise getInt pour récupérer des valeurs de type int
+    final int? age = prefs.getInt('age');
+
+    // Appeler la fonction pour envoyer les données à l'API
+    sendDataToAPI(token, username, password, email, favorite_sport, experience, gender, weightInt, heightInt, age);
+  }
+
+  // Fonction pour envoyer les données à l'API
+  Future<void> sendDataToAPI(String token, String? username, String? password, String? email, String? exercisePreference, String? experience, String? gender, int? weight, int? height, int? age) async {
+    final Uri apiUrl = Uri.parse('https://reymond.alwaysdata.net/FITLife/register.php'); // Remplace l'URL par celle de ton API
+
+    // Données à envoyer
+    final Map<String, dynamic> data = {
+      'token': token,  // Utilise le token fixe
+      'username': username,
+      'password': password,
+      'email': email,
+      'favorite_sport': exercisePreference,
+      'experience': experience,
+      'gender': gender,
+      'weight': weight?.toString(), // Convertir le int en String
+      'height': height?.toString(), // Convertir le int en String
+      'age': age?.toString(), // Convertir l'int en String
+    };
+
+    print('Données envoyées à l\'API:');
+    print(data);
+
+    try {
+      final response = await http.post(
+        apiUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data),
+      );
+
+      if (response.statusCode == 200) {
+        // Si la requête est réussie
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Inscription terminée avec succès.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        print('Réponse de l\'API: ${response.body}');
+        // Rediriger vers la page de connexion après l'inscription réussie
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()), // Naviguer vers la page de connexion
+        );
+      } else {
+        // Si la requête échoue
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erreur lors de l\'inscription.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        print('Erreur lors de l\'inscription: ${response.body}');
+      }
+    } catch (e) {
+      // Gestion des erreurs
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Veuillez sélectionner une préférence d\'exercice.'),
+          content: Text('Une erreur s\'est produite. Veuillez réessayer.'),
           backgroundColor: Colors.red,
         ),
       );
-      return;
+      print('Erreur lors de l\'appel à l\'API: $e');
     }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const WeightPage()), // Passe à la page suivante
-    );
   }
 
   @override
@@ -115,6 +201,7 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
                       onTap: () {
                         setState(() {
                           selectedExercise = exercise;
+                          saveExercisePreference(exercise);  // Sauvegarder le sport préféré
                         });
                       },
                       child: Container(
@@ -159,9 +246,9 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
                 ),
               ),
 
-              // Bouton "Continuer"
+              // Bouton "Finir l'inscription"
               ElevatedButton(
-                onPressed: savePreferenceAndProceed,
+                onPressed: submitData, // Envoie les données vers l'API
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
@@ -175,7 +262,7 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
                     Text(
-                      'Continuer',
+                      'Finir l\'inscription',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -201,7 +288,7 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
 
 // Liste des options d'exercice et leurs icônes associées
 final exerciseOptions = [
-  'Jogging', 'Walking', 'Hiking', 'Natation', 'Biking', 'Fitness', 'Cardio', 'Yoga', 'Autre'
+  'course à pied', 'marche', 'randonnée', 'natation', 'vélo', 'musculation', 'cardio', 'yoga', 'autre'
 ];
 
 final exerciseIcons = {

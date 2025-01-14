@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'GenderPage.dart'; // Importe la première étape
+import 'GenderPage.dart'; // Importer la page suivante
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -16,7 +16,14 @@ class _SignupPageState extends State<SignupPage> {
 
   String errorMessage = '';
 
-  Future<void> saveBasicInfo(String fullName, String email, String password) async {
+  /// Valider le format de l'e-mail
+  bool isValidEmail(String email) {
+    final regex = RegExp(r'^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+    return regex.hasMatch(email);
+  }
+
+  /// Enregistrer les informations de base temporairement
+  Future<void> saveBasicInfo(String username, String email, String password) async {
     try {
       final prefs = await SharedPreferences.getInstance();
 
@@ -29,12 +36,12 @@ class _SignupPageState extends State<SignupPage> {
         return;
       }
 
-      // Enregistre les informations de base temporairement
-      await prefs.setString('fullName', fullName);
+      // Enregistrer les informations utilisateur
+      await prefs.setString('username', username);
       await prefs.setString('email', email);
       await prefs.setString('password', password);
 
-      // Redirige vers la page du poids
+      // Naviguer vers la page suivante
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const GenderPage()),
@@ -181,22 +188,30 @@ class _SignupPageState extends State<SignupPage> {
                           final email = emailController.text.trim();
                           final password = passwordController.text.trim();
 
-                          if (fullName.isNotEmpty && email.isNotEmpty && password.isNotEmpty) {
-                            saveBasicInfo(fullName, email, password);
-                          } else {
+                          if (fullName.isEmpty || email.isEmpty || password.isEmpty) {
                             setState(() {
                               errorMessage = 'Please fill in all fields';
                             });
+                            return;
                           }
+
+                          if (!isValidEmail(email)) {
+                            setState(() {
+                              errorMessage = 'Invalid email format';
+                            });
+                            return;
+                          }
+
+                          saveBasicInfo(fullName, email, password);
                         },
                         style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
                           padding: const EdgeInsets.all(16),
-                          backgroundColor: Colors.white, // Bouton blanc
+                          backgroundColor: Colors.white,
                         ),
                         child: const Icon(
                           Icons.arrow_forward,
-                          color: Colors.black, // Icône noire
+                          color: Colors.black,
                         ),
                       ),
                     ),
