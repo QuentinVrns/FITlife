@@ -9,15 +9,14 @@ import 'pages/AgePage.dart';
 import 'pages/GenderPage.dart';
 import 'pages/FitnessExperiencePage.dart';
 import 'pages/ExercisePreferencePage.dart';
-
+import 'pages/training_page.dart'; // Import de la page Training
+import 'pages/nutrition_page.dart'; // Import de la page Nutrition
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,14 +28,14 @@ class MyApp extends StatelessWidget {
         '/weight': (context) => const WeightPage(),
         '/height': (context) => const HeightPage(),
         '/age': (context) => const AgePage(),
-        '/home': (context) => const HomePage(),
+        '/home': (context) => HomePage(),
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignupPage(),
         '/gender': (context) => const GenderPage(),
         '/fitness': (context) => const FitnessExperiencePage(),
         '/exercice': (context) => const ExercisePreferencePage(),
-
-
+        '/training': (context) => const TrainingPage(), // Route pour AI Training
+        '/nutrition': (context) => const NutritionPage(), // Route pour AI Nutrition
       },
     );
   }
