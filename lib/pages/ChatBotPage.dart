@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '/pages/api_service.dart'; // Ajustez le chemin si nécessaire
 
-
 class ChatBotPage extends StatefulWidget {
   final String title;
   final List<String> options;
@@ -16,6 +15,14 @@ class ChatBotPage extends StatefulWidget {
 class _ChatBotPageState extends State<ChatBotPage> {
   List<Map<String, String>> messages = [];
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.options.isNotEmpty) {
+      handleOptionSelected(widget.options.first);
+    }
+  }
 
   void handleOptionSelected(String option) async {
     setState(() {
@@ -36,7 +43,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        backgroundColor: Colors.orange,
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -54,13 +61,13 @@ class _ChatBotPageState extends State<ChatBotPage> {
                         vertical: 8.0, horizontal: 12.0),
                     padding: const EdgeInsets.all(12.0),
                     decoration: BoxDecoration(
-                      color: isUser ? Colors.blue : Colors.grey.shade300,
+                      color: isUser ? Colors.blue : Colors.grey.shade800,
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Text(
                       message['content'] ?? '',
                       style: TextStyle(
-                        color: isUser ? Colors.white : Colors.black,
+                        color: isUser ? Colors.white : Colors.grey.shade200,
                       ),
                     ),
                   ),
@@ -73,21 +80,6 @@ class _ChatBotPageState extends State<ChatBotPage> {
               padding: EdgeInsets.all(8.0),
               child: CircularProgressIndicator(),
             ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Wrap(
-              spacing: 8.0,
-              children: widget.options.map((option) {
-                return ElevatedButton(
-                  onPressed: () => handleOptionSelected(option),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                  ),
-                  child: Text(option),
-                );
-              }).toList(),
-            ),
-          ),
         ],
       ),
     );

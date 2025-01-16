@@ -1,28 +1,43 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 Future<String> sendMessageToOllama(String message) async {
-  final url = Uri.parse('http://127.0.0.1:11434/api/chat'); // URL du serveur Ollama
+  final String baseUrl = "http://127.0.0.1:11434/api/chat";
 
   try {
+    // Envoyer la requête
     final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
+      Uri.parse(baseUrl),
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: jsonEncode({
-        'model': 'llama2', // Spécifiez ici le modèle que vous utilisez
-        'input': message,
+        "model": "llama3:latest",
+        "messages": [
+          {
+            "role": "user",
+            "content": '$message Réponds de manière concise et uniquement en français.',
+          }
+        ],
+        "stream": false // Désactiver le streaming
       }),
     );
 
+    // Vérifier si la requête a réussi
     if (response.statusCode == 200) {
+      // Décoder la réponse JSON
       final data = jsonDecode(response.body);
-      return data['response'] ?? 'Aucune réponse.';
+
+      // Extraire et retourner uniquement le contenu
+      if (data["message"] != null && data["message"]["content"] != null) {
+        return data["message"]["content"];
+      } else {
+        return "Réponse mal formatée : pas de contenu.";
+      }
     } else {
-      print('Erreur: ${response.body}');
-      return 'Erreur: ${response.statusCode}, ${response.body}';
+      return "Erreur : ${response.statusCode} - ${response.reasonPhrase}";
     }
   } catch (e) {
-    print('Exception : $e');
-    return 'Erreur de connexion : $e';
+    return "Erreur : $e";
   }
 }

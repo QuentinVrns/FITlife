@@ -40,9 +40,11 @@ class _LoginPageState extends State<LoginPage> {
         final data = jsonDecode(response.body);
 
         if (data['success'] == true) {
-          // Sauvegarder l'utilisateur dans les préférences
+          final userId = data['data']['id']; // Récupération de l'id utilisateur
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('user', jsonEncode(data['user']));
+
+          // Sauvegarder l'ID utilisateur
+          await prefs.setInt('userId', userId);
 
           // Rediriger vers la page d'accueil
           Navigator.pushNamed(context, '/home');
