@@ -1,4 +1,5 @@
 import 'package:fitlife/pages/ChoixObjectifIA.dart';
+import 'pages/NutritionGoalPage.dart'; // Import de la page principale pour la nutrition
 import 'package:flutter/material.dart';
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         '/exercice': (context) => const ExercisePreferencePage(),
         '/choixobjectif': (context) => const GoalSelectionPage(),
         '/training': (context) => const TrainingPage(), // Route pour AI Training
-        '/nutrition': (context) => const NutritionPage(), // Route pour AI Nutrition
+        '/nutrition': (context) => const NutritionGoalPage(), // Route pour AI Nutrition
       },
     );
   }

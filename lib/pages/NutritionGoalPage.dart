@@ -1,43 +1,42 @@
 import 'package:flutter/material.dart';
-import 'BodyPartSelectionPage.dart';
-import 'SpecificityPage.dart';
+import 'NutritionSpecificityPage.dart';
 
-class GoalSelectionPage extends StatelessWidget {
-  const GoalSelectionPage({Key? key}) : super(key: key);
+class NutritionGoalPage extends StatelessWidget {
+  const NutritionGoalPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> goals = [
-      {
-        'title': 'Perte de poids',
-        'prompt': 'Donne-moi un entraînement pour perdre du poids',
-        'icon': Icons.fitness_center,
-        'color': Colors.orange
-      },
+    final List<Map<String, dynamic>> nutritionGoals = [
       {
         'title': 'Prise de masse',
-        'prompt': 'Donne-moi un entraînement pour prendre de la masse',
-        'icon': Icons.line_weight,
-        'color': Colors.green
+        'prompt': 'Donne-moi des idées de repas pour prendre de la masse',
+        'icon': Icons.restaurant,
+        'color': Colors.orange,
       },
       {
-        'title': 'Amélioration de l’endurance',
-        'prompt': 'Donne-moi un entraînement pour améliorer mon endurance',
-        'icon': Icons.directions_run,
-        'color': Colors.blue
+        'title': 'Healthy et simple',
+        'prompt': 'Propose-moi des repas simples et sains',
+        'icon': Icons.local_dining,
+        'color': Colors.green,
       },
       {
-        'title': 'Entraînement type',
-        'prompt': 'Donne-moi un entraînement type',
+        'title': 'Perte de poids',
+        'prompt': 'Fournis-moi des repas adaptés pour perdre du poids',
         'icon': Icons.fitness_center,
-        'color': Colors.red
+        'color': Colors.red,
+      },
+      {
+        'title': 'Végétarien',
+        'prompt': 'Fais une suggestion de repas végétariens',
+        'icon': Icons.eco,
+        'color': Colors.blue,
       },
     ];
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Choisissez un objectif',
+          'Choisissez un objectif nutritionnel',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.orange,
@@ -49,31 +48,20 @@ class GoalSelectionPage extends StatelessWidget {
         color: Colors.black,
         padding: const EdgeInsets.all(16),
         child: ListView.builder(
-          itemCount: goals.length,
+          itemCount: nutritionGoals.length,
           itemBuilder: (context, index) {
-            final goal = goals[index];
+            final goal = nutritionGoals[index];
             return GestureDetector(
               onTap: () {
-                if (goal['title'] == 'Entraînement type') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BodyPartSelectionPage(
-                        basePrompt: goal['prompt'],
-                      ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NutritionSpecificityPage(
+                      goalTitle: goal['title'],
+                      basePrompt: goal['prompt'],
                     ),
-                  );
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SpecificityPage(
-                        goalTitle: goal['title'],
-                        basePrompt: goal['prompt'],
-                      ),
-                    ),
-                  );
-                }
+                  ),
+                );
               },
               child: Container(
                 margin: const EdgeInsets.only(bottom: 16),
@@ -91,7 +79,7 @@ class GoalSelectionPage extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // Icône
+                    // Icône colorée
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
@@ -105,7 +93,7 @@ class GoalSelectionPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    // Titre et description
+                    // Texte principal
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +117,7 @@ class GoalSelectionPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Flèche
+                    // Flèche directionnelle
                     const Icon(
                       Icons.arrow_forward_ios,
                       color: Colors.white54,

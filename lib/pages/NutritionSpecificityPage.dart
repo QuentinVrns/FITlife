@@ -1,44 +1,27 @@
 import 'package:flutter/material.dart';
-import 'BodyPartSelectionPage.dart';
-import 'SpecificityPage.dart';
+import 'NutritionChatBotPage.dart';
 
-class GoalSelectionPage extends StatelessWidget {
-  const GoalSelectionPage({Key? key}) : super(key: key);
+class NutritionSpecificityPage extends StatelessWidget {
+  final String goalTitle;
+  final String basePrompt;
+
+  const NutritionSpecificityPage({Key? key, required this.goalTitle, required this.basePrompt})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> goals = [
-      {
-        'title': 'Perte de poids',
-        'prompt': 'Donne-moi un entraînement pour perdre du poids',
-        'icon': Icons.fitness_center,
-        'color': Colors.orange
-      },
-      {
-        'title': 'Prise de masse',
-        'prompt': 'Donne-moi un entraînement pour prendre de la masse',
-        'icon': Icons.line_weight,
-        'color': Colors.green
-      },
-      {
-        'title': 'Amélioration de l’endurance',
-        'prompt': 'Donne-moi un entraînement pour améliorer mon endurance',
-        'icon': Icons.directions_run,
-        'color': Colors.blue
-      },
-      {
-        'title': 'Entraînement type',
-        'prompt': 'Donne-moi un entraînement type',
-        'icon': Icons.fitness_center,
-        'color': Colors.red
-      },
+    final List<Map<String, dynamic>> specificities = [
+      {'title': 'Petit déjeuner', 'detail': 'Idées de petit déjeuner', 'icon': Icons.breakfast_dining, 'color': Colors.orange},
+      {'title': 'Déjeuner', 'detail': 'Suggestions pour le déjeuner', 'icon': Icons.lunch_dining, 'color': Colors.green},
+      {'title': 'Dîner', 'detail': 'Suggestions pour le dîner', 'icon': Icons.dinner_dining, 'color': Colors.blue},
+      {'title': 'Collations', 'detail': 'Options pour les collations', 'icon': Icons.fastfood, 'color': Colors.purple},
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Choisissez un objectif',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          'Spécificités pour $goalTitle',
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.orange,
         elevation: 0,
@@ -49,31 +32,22 @@ class GoalSelectionPage extends StatelessWidget {
         color: Colors.black,
         padding: const EdgeInsets.all(16),
         child: ListView.builder(
-          itemCount: goals.length,
+          itemCount: specificities.length,
           itemBuilder: (context, index) {
-            final goal = goals[index];
+            final specificity = specificities[index];
             return GestureDetector(
               onTap: () {
-                if (goal['title'] == 'Entraînement type') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BodyPartSelectionPage(
-                        basePrompt: goal['prompt'],
-                      ),
+                final completePrompt = '$basePrompt avec des suggestions pour ${specificity['detail']}';
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NutritionChatBotPage(
+                      title: 'Assistant Nutritionnel',
+                      options: [completePrompt],
                     ),
-                  );
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SpecificityPage(
-                        goalTitle: goal['title'],
-                        basePrompt: goal['prompt'],
-                      ),
-                    ),
-                  );
-                }
+                  ),
+                );
               },
               child: Container(
                 margin: const EdgeInsets.only(bottom: 16),
@@ -91,27 +65,27 @@ class GoalSelectionPage extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // Icône
+                    // Icône colorée
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: goal['color'],
+                        color: specificity['color'],
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        goal['icon'],
+                        specificity['icon'],
                         color: Colors.white,
                         size: 28,
                       ),
                     ),
                     const SizedBox(width: 16),
-                    // Titre et description
+                    // Texte principal
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            goal['title'],
+                            specificity['title'],
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -120,7 +94,7 @@ class GoalSelectionPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            goal['prompt'],
+                            specificity['detail'],
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.white.withOpacity(0.8),
@@ -129,7 +103,7 @@ class GoalSelectionPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Flèche
+                    // Flèche directionnelle
                     const Icon(
                       Icons.arrow_forward_ios,
                       color: Colors.white54,

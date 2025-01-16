@@ -634,7 +634,7 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.white,
                       iconSize: 26,
                       onPressed: () {
-                        Navigator.pushNamed(context, '/ai_conversations');
+                        Navigator.pushNamed(context, '/choixobjectif');
                       },
                     ),
                     FloatingActionButton(
@@ -653,7 +653,7 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.white,
                       iconSize: 26,
                       onPressed: () {
-                        Navigator.pushNamed(context, '/ai_nutrition');
+                        Navigator.pushNamed(context, '/nutrition');
                       },
                     ),
                   ],
