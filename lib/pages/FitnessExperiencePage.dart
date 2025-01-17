@@ -64,7 +64,7 @@ class _FitnessExperiencePageState extends State<FitnessExperiencePage> {
                     ),
                   ),
                   const Text(
-                    'Assessment',
+                    'Questionnaire',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -93,7 +93,7 @@ class _FitnessExperiencePageState extends State<FitnessExperiencePage> {
               // Titre
               Center(
                 child: Text(
-                  'What is your fitness experience?',
+                  'Quel est votre niveau?',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 28,

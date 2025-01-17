@@ -26,7 +26,6 @@ class _ChatBotPageState extends State<ChatBotPage> {
 
   void handleOptionSelected(String option) async {
     setState(() {
-      messages.add({'role': 'user', 'content': option});
       isLoading = true;
     });
 
@@ -45,41 +44,54 @@ class _ChatBotPageState extends State<ChatBotPage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final message = messages[index];
-                final isUser = message['role'] == 'user';
-
-                return Align(
-                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 12.0),
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: isUser ? Colors.blue : Colors.grey.shade800,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Text(
-                      message['content'] ?? '',
-                      style: TextStyle(
-                        color: isUser ? Colors.white : Colors.grey.shade200,
-                      ),
-                    ),
-                  ),
-                );
-              },
+          // Image de fond
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/backgroundchatbot.jpg'), // Vérifiez le chemin ici
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          if (isLoading)
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(),
-            ),
+          // Contenu principal
+          Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+
+                    return Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade800.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Text(
+                          message['content'] ?? '',
+                          style: TextStyle(
+                            color: Colors.grey.shade200,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              if (isLoading)
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(),
+                ),
+            ],
+          ),
         ],
       ),
     );

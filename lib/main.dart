@@ -13,6 +13,7 @@ import 'pages/FitnessExperiencePage.dart';
 import 'pages/ExercisePreferencePage.dart';
 import 'pages/training_page.dart'; // Import de la page Training
 import 'pages/nutrition_page.dart'; // Import de la page Nutrition
+import 'pages/GeneralChatBotPage.dart';
 
 void main() {
   runApp(MyApp());
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/choixobjectif': (context) => const GoalSelectionPage(),
         '/training': (context) => const TrainingPage(), // Route pour AI Training
         '/nutrition': (context) => const NutritionGoalPage(), // Route pour AI Nutrition
+        '/general_chatbot': (context) => const GeneralChatBotPage(),
       },
     );
   }

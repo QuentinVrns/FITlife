@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'login_page.dart';  // Importer votre page de connexion
+import 'login_page.dart';
 
 class ExercisePreferencePage extends StatefulWidget {
   const ExercisePreferencePage({Key? key}) : super(key: key);
@@ -12,64 +12,61 @@ class ExercisePreferencePage extends StatefulWidget {
 }
 
 class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
-  String? selectedExercise; // Variable pour stocker le choix de l'utilisateur
+  String? selectedExercise;
 
-  // Fonction pour enregistrer la préférence de sport dans SharedPreferences
   Future<void> saveExercisePreference(String exercise) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('exercise_preference', exercise); // Enregistre la préférence de sport
+    await prefs.setString('exercise_preference', exercise);
   }
 
-  // Fonction pour envoyer les données à l'API
   Future<void> submitData() async {
     final prefs = await SharedPreferences.getInstance();
+    final String token = 'd8547be5-d190-11ef-8788-525400af6226';
 
-    // Définir un token fixe
-    final String token = 'd8547be5-d190-11ef-8788-525400af6226'; // Token fixe
-
-    // Récupérer les autres informations de SharedPreferences
     final String? username = prefs.getString('username');
     final String? password = prefs.getString('password');
     final String? email = prefs.getString('email');
-    final String? favorite_sport = prefs.getString('exercise_preference') ?? 'Non spécifié'; // Valeur par défaut si null
+    final String? favorite_sport =
+        prefs.getString('exercise_preference') ?? 'Non spécifié';
     final String? experience = prefs.getString('fitness_experience');
     final String? gender = prefs.getString('gender');
-
-    // Utilise getDouble pour récupérer des valeurs de type double et les convertir en int
     final double? weight = prefs.getDouble('weight');
     final double? height = prefs.getDouble('height');
-
-    // Convertir les valeurs double en int si nécessaire
-    final int weightInt = weight?.toInt() ?? 0; // Utiliser 0 par défaut si weight est null
-    final int heightInt = height?.toInt() ?? 0; // Utiliser 0 par défaut si height est null
-
-    // Utilise getInt pour récupérer des valeurs de type int
+    final int weightInt = weight?.toInt() ?? 0;
+    final int heightInt = height?.toInt() ?? 0;
     final int? age = prefs.getInt('age');
 
-    // Appeler la fonction pour envoyer les données à l'API
-    sendDataToAPI(token, username, password, email, favorite_sport, experience, gender, weightInt, heightInt, age);
+    sendDataToAPI(token, username, password, email, favorite_sport, experience,
+        gender, weightInt, heightInt, age);
   }
 
-  // Fonction pour envoyer les données à l'API
-  Future<void> sendDataToAPI(String token, String? username, String? password, String? email, String? exercisePreference, String? experience, String? gender, int? weight, int? height, int? age) async {
-    final Uri apiUrl = Uri.parse('https://reymond.alwaysdata.net/FITLife/register.php'); // Remplace l'URL par celle de ton API
+  Future<void> sendDataToAPI(
+      String token,
+      String? username,
+      String? password,
+      String? email,
+      String? exercisePreference,
+      String? experience,
+      String? gender,
+      int? weight,
+      int? height,
+      int? age,
+      ) async {
+    final Uri apiUrl =
+    Uri.parse('https://reymond.alwaysdata.net/FITLife/register.php');
 
-    // Données à envoyer
     final Map<String, dynamic> data = {
-      'token': token,  // Utilise le token fixe
+      'token': token,
       'username': username,
       'password': password,
       'email': email,
       'favorite_sport': exercisePreference,
       'experience': experience,
       'gender': gender,
-      'weight': weight?.toString(), // Convertir le int en String
-      'height': height?.toString(), // Convertir le int en String
-      'age': age?.toString(), // Convertir l'int en String
+      'weight': weight?.toString(),
+      'height': height?.toString(),
+      'age': age?.toString(),
     };
-
-    print('Données envoyées à l\'API:');
-    print(data);
 
     try {
       final response = await http.post(
@@ -79,38 +76,31 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
       );
 
       if (response.statusCode == 200) {
-        // Si la requête est réussie
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Inscription terminée avec succès.'),
             backgroundColor: Colors.green,
           ),
         );
-        print('Réponse de l\'API: ${response.body}');
-        // Rediriger vers la page de connexion après l'inscription réussie
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginPage()), // Naviguer vers la page de connexion
+          MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       } else {
-        // Si la requête échoue
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Erreur lors de l\'inscription.'),
             backgroundColor: Colors.red,
           ),
         );
-        print('Erreur lors de l\'inscription: ${response.body}');
       }
     } catch (e) {
-      // Gestion des erreurs
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Une erreur s\'est produite. Veuillez réessayer.'),
           backgroundColor: Colors.red,
         ),
       );
-      print('Erreur lors de l\'appel à l\'API: $e');
     }
   }
 
@@ -124,7 +114,6 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Barre supérieure
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -146,7 +135,7 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
                     ),
                   ),
                   const Text(
-                    'Évaluation',
+                    'Questionnaire',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -154,7 +143,8 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: Colors.blue.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(15),
@@ -171,26 +161,22 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
                 ],
               ),
               const SizedBox(height: 30),
-
-              // Titre
               Center(
                 child: Text(
                   'Avez-vous une préférence d\'exercice spécifique ?',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 30),
-
-              // Options d'exercice
               Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
+                    crossAxisCount: 2,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
                   ),
@@ -201,7 +187,7 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
                       onTap: () {
                         setState(() {
                           selectedExercise = exercise;
-                          saveExercisePreference(exercise);  // Sauvegarder le sport préféré
+                          saveExercisePreference(exercise);
                         });
                       },
                       child: Container(
@@ -217,64 +203,48 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
                             width: 2,
                           ),
                         ),
-                        padding: const EdgeInsets.all(16),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                exerciseIcons[exercise] ?? Icons.help,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              exerciseIcons[exercise] ?? Icons.help,
+                              color: Colors.white,
+                              size: 40,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              exercise,
+                              style: const TextStyle(
                                 color: Colors.white,
-                                size: 32,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                exercise,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
                     );
                   },
                 ),
               ),
-
-              // Bouton "Finir l'inscription"
+              const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: submitData, // Envoie les données vers l'API
+                onPressed: submitData,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 15),
-                  shadowColor: Colors.orange.withOpacity(0.4),
-                  elevation: 8,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      'Finir l\'inscription',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Icon(
-                      Icons.arrow_forward,
-                      color: Colors.white,
-                    ),
-                  ],
+                child: const Text(
+                  'Finir l\'inscription',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -286,19 +256,26 @@ class _ExercisePreferencePageState extends State<ExercisePreferencePage> {
   }
 }
 
-// Liste des options d'exercice et leurs icônes associées
 final exerciseOptions = [
-  'course à pied', 'marche', 'randonnée', 'natation', 'vélo', 'musculation', 'cardio', 'yoga', 'autre'
+  'course à pied',
+  'marche',
+  'randonnée',
+  'natation',
+  'vélo',
+  'musculation',
+  'cardio',
+  'yoga',
+  'autre'
 ];
 
 final exerciseIcons = {
-  'Jogging': Icons.directions_run,
-  'Walking': Icons.directions_walk,
-  'Hiking': Icons.nature_people,
-  'Natation': Icons.pool, // Icône de natation
-  'Biking': Icons.directions_bike,
-  'Fitness': Icons.fitness_center,
-  'Cardio': Icons.favorite,
-  'Yoga': Icons.self_improvement,
-  'Autre': Icons.more_horiz,
+  'course à pied': Icons.directions_run,
+  'marche': Icons.directions_walk,
+  'randonnée': Icons.terrain,
+  'natation': Icons.pool,
+  'vélo': Icons.directions_bike,
+  'musculation': Icons.fitness_center,
+  'cardio': Icons.favorite,
+  'yoga': Icons.self_improvement,
+  'autre': Icons.more_horiz,
 };

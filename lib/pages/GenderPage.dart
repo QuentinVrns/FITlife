@@ -247,13 +247,24 @@ class _GenderPageState extends State<GenderPage> {
                 children: [
                   // Bouton "Skip"
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const WeightPage(),
-                        ),
-                      );
+                    onTap: () async {
+                      try {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('gender', 'other'); // Enregistrer "autre" comme genre
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const WeightPage(),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Erreur: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                       width: double.infinity,

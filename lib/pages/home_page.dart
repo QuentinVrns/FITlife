@@ -311,8 +311,10 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
               // Header Section avec bouton de déconnexion
               Padding(
+
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -406,7 +408,7 @@ class _HomePageState extends State<HomePage> {
                                 "${userData['calories']} kCal / 3000 kCal",
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
+                                  fontSize: 10,
                                 ),
                               ),
                             ],
@@ -468,7 +470,7 @@ class _HomePageState extends State<HomePage> {
                                 "${userData['hydration']} mL / 3L",
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
+                                  fontSize: 10,
                                 ),
                               ),
                             ],
@@ -607,6 +609,79 @@ class _HomePageState extends State<HomePage> {
                             alignment: Alignment.bottomLeft,
                             child: Text(
                               "AI Nutrition Guide",
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              const Spacer(),
+
+              const SizedBox(height: 16), // Ajout d'un espacement entre les deux cartes
+
+// AI Nutrition Section Title
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: const Text(
+                  "Chatbot",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+
+// AI Nutrition Card
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/general_chatbot'); // Navigue également vers le ChatBot
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.green.withOpacity(0.4),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              'assets/images/chatbot.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              "ChatBot",
                               style: TextStyle(
                                 color: Colors.white70,
                                 fontSize: 14,
