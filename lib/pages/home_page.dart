@@ -302,400 +302,396 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return false; // Empêche l'utilisateur de revenir en arrière
-      },
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        onWillPop: () async {
+      return false; // Empêche l'utilisateur de revenir en arrière
+    },
+    child: Scaffold(
+    backgroundColor: Colors.black,
+    body: SafeArea(
+    child: SingleChildScrollView(
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    // Header Section avec bouton de déconnexion
+    Padding(
+    padding: const EdgeInsets.all(12.0),
+    child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+    Text(
+    "Hello, ${userData['username'] ?? 'User'}!",
+    style: const TextStyle(
+    color: Colors.white,
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    ),
+    ),
+    IconButton(
+    icon: const Icon(Icons.logout, color: Colors.white),
+    onPressed: _logout, // Appelle la méthode de déconnexion
+    ),
+    ],
+    ),
+    ),
+    const SizedBox(height: 16),
 
-              // Header Section avec bouton de déconnexion
-              Padding(
+    // Informations Section Title
+    Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+    child: const Text(
+    "Informations",
+    style: TextStyle(
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    ),
+    ),
+    ),
+    const SizedBox(height: 8),
 
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Hello, ${userData['username'] ?? 'User'}!",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.logout, color: Colors.white),
-                      onPressed: _logout, // Appelle la méthode de déconnexion
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
+    // Metrics Cards Row
+    Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+    child: Row(
+    children: [
+    // Calories Burned Card
+    Expanded(
+    child: GestureDetector(
+    onTap: _showUpdateCaloriesDialog,
+    child: Container(
+    margin: const EdgeInsets.only(right: 6),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+    color: Colors.orange,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+    BoxShadow(
+    color: Colors.orange.withOpacity(0.4),
+    blurRadius: 8,
+    offset: const Offset(0, 3),
+    ),
+    ],
+    ),
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    Row(
+    children: [
+    const Text(
+    "Calories",
+    style: TextStyle(
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    ),
+    ),
+    const SizedBox(width: 6),
+    Image.asset(
+    'assets/images/flamme.png',
+    width: 20,
+    height: 20,
+    ),
+    ],
+    ),
+    const SizedBox(height: 12),
+    FAProgressBar(
+    currentValue: userData['calories'].toDouble(),
+    maxValue: 3000,
+    size: 10,
+    backgroundColor: Colors.white.withOpacity(0.2),
+    progressColor: Colors.white,
+    animatedDuration:
+    const Duration(milliseconds: 300),
+    ),
+    const SizedBox(height: 12),
+    Text(
+    "${userData['calories']} kCal / 3000 kCal",
+    style: const TextStyle(
+    color: Colors.white,
+    fontSize: 10,
+    ),
+    ),
+    ],
+    ),
+    ),
+    ),
+    ),
+    // Hydration Metrics Card
+    Expanded(
+    child: GestureDetector(
+    onTap: _showUpdateWaterDialog,
+    child: Container(
+    margin: const EdgeInsets.only(left: 6),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+    color: Colors.blue,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+    BoxShadow(
+    color: Colors.blue.withOpacity(0.4),
+    blurRadius: 8,
+    offset: const Offset(0, 3),
+    ),
+    ],
+    ),
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    Row(
+    children: [
+    const Text(
+    "Hydration",
+    style: TextStyle(
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    ),
+    ),
+    const SizedBox(width: 6),
+    Image.asset(
+    'assets/images/goutte.png',
+    width: 20,
+    height: 20,
+    ),
+    ],
+    ),
+    const SizedBox(height: 12),
+    FAProgressBar(
+    currentValue: userData['hydration'].toDouble(),
+    maxValue: 3000,
+    size: 10,
+    backgroundColor: Colors.white.withOpacity(0.2),
+    progressColor: Colors.white,
+    animatedDuration:
+    const Duration(milliseconds: 300),
+    ),
+    const SizedBox(height: 12),
+    Text(
+    "${userData['hydration']} mL / 3L",
+    style: const TextStyle(
+    color: Colors.white,
+    fontSize: 10,
+    ),
+    ),
+    ],
+    ),
+    ),
+    ),
+    ),
+    ],
+    ),
+    ),
+    const SizedBox(height: 16),
 
-              // Informations Section Title
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: const Text(
-                  "Informations",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
+    // AI Coach Section Title
+    Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+    child: const Text(
+    "AI Coach",
+    style: TextStyle(
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    ),
+    ),
+    ),
+    const SizedBox(height: 8),
 
-              // Metrics Cards Row
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Row(
-                  children: [
-                    // Calories Burned Card
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: _showUpdateCaloriesDialog, // Ouvre la boîte de dialogue pour les calories
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 6),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.orange,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.orange.withOpacity(0.4),
-                                blurRadius: 8,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text(
-                                    "Calories",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Image.asset(
-                                    'assets/images/flamme.png',
-                                    width: 20,
-                                    height: 20,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              FAProgressBar(
-                                currentValue: userData['calories'].toDouble(),
-                                maxValue: 3000,
-                                size: 10,
-                                backgroundColor: Colors.white.withOpacity(0.2),
-                                progressColor: Colors.white,
-                                animatedDuration: const Duration(milliseconds: 300),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                "${userData['calories']} kCal / 3000 kCal",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Hydration Metrics Card
-                    // Hydration Metrics Card
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: _showUpdateWaterDialog, // Ouvre la boîte de dialogue
-                        child: Container(
-                          margin: const EdgeInsets.only(left: 6),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blue.withOpacity(0.4),
-                                blurRadius: 8,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text(
-                                    "Hydration",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Image.asset(
-                                    'assets/images/goutte.png',
-                                    width: 20,
-                                    height: 20,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              FAProgressBar(
-                                currentValue: userData['hydration'].toDouble(),
-                                maxValue: 3000,
-                                size: 10,
-                                backgroundColor: Colors.white.withOpacity(0.2),
-                                progressColor: Colors.white,
-                                animatedDuration: const Duration(milliseconds: 300),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                "${userData['hydration']} mL / 3L",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              // AI Coach Section Title
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: const Text(
-                  "AI Coach",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
+    // Virtual AI Coach Card
+    Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+    child: GestureDetector(
+    onTap: () {
+    Navigator.pushNamed(context, '/choixobjectif');
+    },
+    child: Container(
+    width: double.infinity,
+    height: 160,
+    decoration: BoxDecoration(
+    color: Colors.orange,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+    BoxShadow(
+    color: Colors.orange.withOpacity(0.4),
+    blurRadius: 8,
+    offset: const Offset(0, 3),
+    ),
+    ],
+    ),
+    child: Stack(
+    children: [
+    Positioned.fill(
+    child: ClipRRect(
+    borderRadius: BorderRadius.circular(12),
+    child: Image.asset(
+    'assets/images/robot1.jpg',
+    fit: BoxFit.cover,
+    ),
+    ),
+    ),
+    Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+    color: Colors.black.withOpacity(0.5),
+    borderRadius: BorderRadius.circular(12),
+    ),
+    child: const Align(
+    alignment: Alignment.bottomLeft,
+    child: Text(
+    "AI Conversations",
+    style: TextStyle(
+    color: Colors.white70,
+    fontSize: 14,
+    ),
+    ),
+    ),
+    ),
+    ],
+    ),
+    ),
+    ),
+    ),
+    const SizedBox(height: 16),
 
-// Virtual AI Coach Card
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/choixobjectif'); // Navigue vers le ChatBot
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.orange.withOpacity(0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              'assets/images/robot1.jpg',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Text(
-                              "AI Conversations",
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+    // AI Nutrition Section Title
+    Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+    child: const Text(
+    "AI Nutrition",
+    style: TextStyle(
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    ),
+    ),
+    ),
+    const SizedBox(height: 8),
 
-              const SizedBox(height: 16), // Ajout d'un espacement entre les deux cartes
+    // AI Nutrition Card
+    Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+    child: GestureDetector(
+    onTap: () {
+    Navigator.pushNamed(context, '/nutrition');
+    },
+    child: Container(
+    width: double.infinity,
+    height: 160,
+    decoration: BoxDecoration(
+    color: Colors.green,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+    BoxShadow(
+    color: Colors.green.withOpacity(0.4),
+    blurRadius: 8,
+    offset: const Offset(0, 3),
+    ),
+    ],
+    ),
+    child: Stack(
+    children: [
+    Positioned.fill(
+    child: ClipRRect(
+    borderRadius: BorderRadius.circular(12),
+    child: Image.asset(
+    'assets/images/nutrition.webp',
+    fit: BoxFit.cover,
+    ),
+    ),
+    ),
+    Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+    color: Colors.black.withOpacity(0.5),
+    borderRadius: BorderRadius.circular(12),
+    ),
+    child: const Align(
+    alignment: Alignment.bottomLeft,
+    child: Text(
+    "AI Nutrition Guide",
+    style: TextStyle(
+    color: Colors.white70,
+    fontSize: 14,
+    ),
+    ),
+    ),
+    ),
+    ],
+    ),
+    ),
+    ),
+    ),
+    const SizedBox(height: 16),
 
-// AI Nutrition Section Title
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: const Text(
-                  "AI Nutrition",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
+    // Chatbot Section Title
+    Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+    child: const Text(
+    "Chatbot",
+    style: TextStyle(
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    ),
+    ),
+    ),
+    const SizedBox(height: 8),
 
-// AI Nutrition Card
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/nutrition'); // Navigue également vers le ChatBot
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.green.withOpacity(0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              'assets/images/nutrition.webp',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Text(
-                              "AI Nutrition Guide",
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              const Spacer(),
-
-              const SizedBox(height: 16), // Ajout d'un espacement entre les deux cartes
-
-// AI Nutrition Section Title
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: const Text(
-                  "Chatbot",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-
-// AI Nutrition Card
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/general_chatbot'); // Navigue également vers le ChatBot
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.green.withOpacity(0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              'assets/images/chatbot.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Text(
-                              "ChatBot",
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              const Spacer(),
+    // Chatbot Card
+    Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+    child: GestureDetector(
+    onTap: () {
+    Navigator.pushNamed(context, '/general_chatbot');
+    },
+    child: Container(
+    width: double.infinity,
+    height: 160,
+    decoration: BoxDecoration(
+    color: Colors.green,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+    BoxShadow(
+    color: Colors.green.withOpacity(0.4),
+    blurRadius: 8,
+    offset: const Offset(0, 3),
+    ),
+    ],
+    ),
+    child: Stack(
+    children: [
+    Positioned.fill(
+    child: ClipRRect(
+    borderRadius: BorderRadius.circular(12),
+    child: Image.asset(
+    'assets/images/chatbot.png',
+    fit: BoxFit.cover,
+    ),
+    ),
+    ),
+    Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+    color: Colors.black.withOpacity(0.5),
+    borderRadius: BorderRadius.circular(12),
+    ),
+    child: const Align(
+    alignment: Alignment.bottomLeft,
+    child: Text(
+    "ChatBot",
+    style: TextStyle(
+    color: Colors.white70,
+    fontSize: 14,
+    ),
+    ),
+    ),
+    ),
+    ],
+    ),
+    ),
+    ),
+    ),
+    const SizedBox(height: 16),
 
               // Navigation Bar
               Container(
@@ -738,6 +734,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+    ),
     );
   }
 }

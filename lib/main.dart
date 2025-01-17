@@ -12,7 +12,6 @@ import 'pages/GenderPage.dart';
 import 'pages/FitnessExperiencePage.dart';
 import 'pages/ExercisePreferencePage.dart';
 import 'pages/training_page.dart'; // Import de la page Training
-import 'pages/nutrition_page.dart'; // Import de la page Nutrition
 import 'pages/GeneralChatBotPage.dart';
 
 void main() {
